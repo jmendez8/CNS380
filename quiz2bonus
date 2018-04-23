@@ -1,0 +1,8 @@
+'''
+Bonus: Write a regular expression that will match any line in a Linux /etc/shadow file.
+
+EX: juan:$1$.QKDPc5E$SWlkjRWexrXYgc98F.:12825:0:90:5:30:13096:
+'''
+
+
+r = '\w.+\:'
