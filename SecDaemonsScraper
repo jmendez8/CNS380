@@ -1,0 +1,28 @@
+import requests
+import urllib3
+import urllib.parse
+from bs4 import BeautifulSoup
+from selenium import webdriver
+import re
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning) #This is to remove a ssl error.
+#had help from this stack overflow post https://stackoverflow.com/questions/27981545/suppress-insecurerequestwarning-unverified-https-request-is-being-made-in-pytho
+file = open("WebPath.txt", "r") #Opens, reads file with directories.
+contents = file.read().split("\n") #Reads, splits everything in file by line.
+file.close()
+url = 'https://www.secdaemons.org/' #Target URL.
+for item in contents: #Looks through parsed items in file.
+    r = requests.get(url+item, verify=False) #Checks get request on the url and appeneded path from file.
+    if r.status_code == 200: #checks if status code is 200. Prints the URL and path if the status code is 200 OK.
+        print(url+item)
+
+target = "https://www.secdaemons.org/admin" #Target site that returned a 200 status code
+web = webdriver.Chrome() #selenium chrome webdriver
+web.get(target) #navigates to target url
+sauce = BeautifulSoup(web.page_source,"html.parser") #looks through html source code 
+regexNum = ('\(\d{3}\)+\W+\d{3}\-+\d{4}|\(\d{3}\)+\d{3}\.+\d{4}|\d{3}\-+\d{3}\-+\d{4}|\d{3}\.+\d{3}\.+\d{4}') #regex for any phone numbers in different formats
+regexMail = ('[\w\.]+@[\w\.]+com') #regex for any emails
+nums = re.findall(regexNum, str(sauce)) #looks through html source code for any regex that might be phone numbers
+mails = re.findall(regexMail, str(sauce)) #looks through html source code for anything that might be an email address
+print(nums)
+print(mails)
