@@ -22,7 +22,7 @@ for item in os.listdir("."):
             pass
 
 while True:
-    #time.sleep(5)
+    time.sleep(5)
     for item in os.listdir("."):
         if os.path.isfile(item):
             try:
@@ -45,12 +45,20 @@ while True:
                     percentage = positives / total * 100
                     if percentage >= percent:
                         os.remove(item)
-                        data = {"data":"Deleted "+ item + " with MD5 Checksum " + hsh}
+                        data = {"data":"Deleted "+ item + " with MD5 Checksum " + resource}
                         request("POST", localhost, data=data)
                     else:
-                        baseline.update({item:hsh})
-                        data = {"data":"Deleted "+ item + " with MD5 Checksum " + hsh}
+                        baseline.update({item:resource})
+                        data = {"data":"Deleted "+ item + " with MD5 Checksum " + resource}
                         request("POST", localhost, data=data)
             except:
                 pass
+                    
+                
+
+
+
+
+
+
                     
