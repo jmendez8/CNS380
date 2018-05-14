@@ -1,0 +1,56 @@
+from flask import Flask
+from requests import request
+import time
+import os
+import hashlib
+
+#Credit for this goes to Li-wey. I used the templates he uploaded to d2l
+#Used virus total api templates
+
+baseline = dict()
+apikey = '692bc14e139a4192f02888333b3e76a4bea6755e69afe35bf7f8e114a71b452a'
+percent = 50
+localhost = 'http://127.0.0.1'
+
+#baseline of dir
+for item in os.listdir("."):
+    if os.path.isfile(item):
+        try:
+            md5_checksum = hashlib.md5((open(item, 'rb').read())).hexdigest()
+            baseline.update({item:md5_checksum})
+        except:
+            pass
+
+while True:
+    #time.sleep(5)
+    for item in os.listdir("."):
+        if os.path.isfile(item):
+            try:
+                if md5_checksum not in baseline.values():
+                    #Upload the File
+                    url = 'https://www.virustotal.com/vtapi/v2/file/scan'
+                    params = {'apikey': apikey}
+                    files = {'file': (item, open(item, 'rb'))}
+                    response = requests.post(url, files=files, params=params).json()
+                    resource = response.json()["resource"]
+                    #print(resource)
+                    #Retrieve File Report
+                    url = 'https://www.virustotal.com/vtapi/v2/file/report'
+                    params = {'apikey': apikey, 'resource': resource}
+                    response = requests.get(url, params=params).json()
+                    #print(response.json())
+                    #Calculate percentage
+                    total = response.json()["total"]
+                    positives = response.json()["positives"]
+                    percentage = positives / total * 100
+                    if percentage >= percent:
+                        os.remove(item)
+                        data = {"data":"Deleted "+ item + " with MD5 Checksum " + hsh}
+                        request("POST", localhost, data=data)
+                    else:
+                        baseline.update({item:hsh})
+                        data = {"data":"Deleted "+ item + " with MD5 Checksum " + hsh}
+                        request("POST", localhost, data=data)
+            except:
+                pass
+                    
